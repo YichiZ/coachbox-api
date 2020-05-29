@@ -1,7 +1,9 @@
 const router = require('express').Router();
 const usersController = require('../controllers/usersController');
 
-router.get('/', (req, res) => res.send('Hello World from User'));
+router.get('/', usersController.getItems);
+
+router.get('/:id', usersController.getItem);
 
 router.post('/', usersController.createItem);
 
