@@ -13,29 +13,19 @@ exports.getItem = async (req, res) => {
 
     const user = await User.findOne({email})
         .exec()
-        .then()
         .catch(err => console.log(err));
 
     user ? res.status(200).json(user) : res.sendStatus(404);    
 }
 
-const createItem = async (req) => {
-    return new Promise((resolve, reject) => {
-        const user = new User({
-            name: 'Yichi',
-            email: 'yichi@mail.com'
-        });
-        user.save((err, item) => {
-            if (err) {
-                reject({code: 422, message: err.message})
-            }
-            resolve(item.toObject());
-        })
-    });
-};
-
 exports.createItem = async (req, res) => {
-    const item = await createItem(req);
-    console.log(item);
-    res.status(201).json(item);
+    const user = new User({
+        name: req.body.name,
+        email: req.body.email
+    });
+
+    const response = await user.save()
+        .catch(err => console.log(err));
+
+    res.status(201).json(response);
 }
