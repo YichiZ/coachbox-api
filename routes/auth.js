@@ -43,4 +43,18 @@ router.get('/me', function (req, res) {
     });
 });
 
+router.post('/login', function(req, res) {
+    User.findOne({ email: req.body.email }, function (err, user) {
+        if (err) return res.sendStatus(500);
+        if (!user) return res.sendStatus(404);
+
+        const isPasswordValid = bcrypt.compareSync(req.body.password, user.password);
+        if (!isPasswordValid) return res.sendStatus(401);
+
+        const token = jwt.sign({id: user._id, email: user.email }, process.env.SECRET, { expiresIn: 86400 });
+
+        res.status(200).send({token});
+    })
+});
+
 module.exports = router;
