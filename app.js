@@ -13,5 +13,6 @@ app.use(express.json());
 
 app.use('/', require('./routes/index'));
 app.use('/api/users', require('./routes/users'));
+app.use('/api/auth', require('./routes/auth'));
 
 app.listen(process.env.PORT, () => console.log(`Server starter on port ${process.env.PORT}`));
