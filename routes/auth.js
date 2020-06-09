@@ -3,38 +3,31 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-router.post('/register', function (req, res) {
+router.post('/register', async (req, res) => {
     const saltRounds = 10;
-    bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
-        if (err) {
-            return res.status(403).send(err);
-        }
-        var userModel = {
-            name: req.body.name,
-            email: req.body.email,
-            password: hash
-        }
+    const password = await bcrypt.hash(req.body.password, saltRounds);
 
-        User.create(userModel, function (err, user) {
-            if (err) {
-                return res.sendStatus(403);
-            }
-            // Create a token
-            var token = jwt.sign(userModel, process.env.SECRET, {
-                expiresIn: 86400 // in seconds
-            });
-            res.status(200).send({ auth: true, token: token });
-        });
-    });
+    const user = new User({
+        name: req.body.name,
+        email: req.body.email,
+        password
+    })
+
+    const response = await user.save()
+        .catch(err => res.status(500).send(err));
+
+    var token = jwt.sign({ email: response.email, name: user.name }, process.env.SECRET, { expiresIn: 86400 });
+
+    res.send({token});
 });
 
-router.get('/me', function (req, res) {
+router.get('/me', (req, res) => {
     var token = req.headers['authorization'].split(' ')[1];
     if (!token) {
         return res.sendStatus(401);
     }
 
-    jwt.verify(token, process.env.SECRET, function (err, decoded) {
+    jwt.verify(token, process.env.SECRET, (err, decoded) => {
         if (err) {
             return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
         }
@@ -43,18 +36,17 @@ router.get('/me', function (req, res) {
     });
 });
 
-router.post('/login', function(req, res) {
-    User.findOne({ email: req.body.email }, function (err, user) {
-        if (err) return res.sendStatus(500);
-        if (!user) return res.sendStatus(404);
+router.post('/login', async (req, res) => {
+    const user = await User.findOne({ email: req.body.email})
+        .exec()
+        .catch(err => res.send(500).send(err));
 
-        const isPasswordValid = bcrypt.compareSync(req.body.password, user.password);
-        if (!isPasswordValid) return res.sendStatus(401);
+    const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
+    if (!isPasswordValid) return res.send(401).send({ error: "Password does not match" });
 
-        const token = jwt.sign({id: user._id, email: user.email }, process.env.SECRET, { expiresIn: 86400 });
+    const token = jwt.sign({ email: user.email, name: user.name }, process.env.SECRET, { expiresIn: 86400 });
 
-        res.status(200).send({token});
-    })
+    res.status(200).send({ token });    
 });
 
 module.exports = router;
