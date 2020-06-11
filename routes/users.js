@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const User = require('../models/User');
+const Authorize = require('../middleware/Authorize');
 
-router.get('/', async (req, res) => {
+router.get('/', Authorize, async (req, res) => {
     const users = await User.find()
         .exec()
         .then()
@@ -9,7 +10,7 @@ router.get('/', async (req, res) => {
     res.status(200).json(users);
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', Authorize, async (req, res) => {
     const email = req.params['id'];
 
     const user = await User.findOne({email})
@@ -19,7 +20,7 @@ router.get('/:id', async (req, res) => {
     user ? res.status(200).json(user) : res.sendStatus(404);    
 });
 
-router.post('/', async (req, res) => {
+router.post('/', Authorize, async (req, res) => {
     const user = new User({
         name: req.body.name,
         email: req.body.email
