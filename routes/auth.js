@@ -2,6 +2,7 @@ const router = require('express').Router();
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const Authorize = require('../middleware/Authorize');
 
 router.post('/register', async (req, res) => {
     const saltRounds = 10;
@@ -21,19 +22,8 @@ router.post('/register', async (req, res) => {
     res.send({token});
 });
 
-router.get('/me', (req, res) => {
-    var token = req.headers['authorization'].split(' ')[1];
-    if (!token) {
-        return res.sendStatus(401);
-    }
-
-    jwt.verify(token, process.env.SECRET, (err, decoded) => {
-        if (err) {
-            return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-        }
-
-        res.status(200).send(decoded);
-    });
+router.get('/me', Authorize, (req, res) => {
+    res.status(200).send(req.jwtPayload);
 });
 
 router.post('/login', async (req, res) => {
