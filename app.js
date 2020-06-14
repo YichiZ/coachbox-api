@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const https = require('https');
+const fs = require('fs');
 
 const app = express();
 
@@ -17,4 +19,12 @@ app.use('/', require('./routes/index'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/auth', require('./routes/auth'));
 
-app.listen(process.env.PORT, () => console.log(`Server starter on port ${process.env.PORT}`));
+const options = {
+    key: fs.readFileSync('./certificates/key.pem'),
+    cert: fs.readFileSync('./certificates/cert.pem')
+};
+
+https.createServer(options, function (req, res) {
+    res.writeHead(200);
+    res.end("hello world\n");
+}).listen(process.env.PORT, () => console.log(`Server starter on port ${process.env.PORT}`));
