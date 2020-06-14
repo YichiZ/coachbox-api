@@ -19,13 +19,15 @@ app.use('/', require('./routes/index'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/auth', require('./routes/auth'));
 
-if (fs.existsSync(process.env.PRIVATE_KEY_PATH) && fs.existsSync(process.env.PRIVATE_CERTIFICATE_PATH)) {
-    const options = {
-        key: fs.readFileSync(process.env.PRIVATE_KEY_PATH),
-        cert: fs.readFileSync(process.env.PRIVATE_CERTIFICATE_PATH)
-    };
+app.listen(process.env.PORTHTTP, () => console.log(`Server starter on port ${process.env.PORTHTTP}`))
 
-    https.createServer(options, app).listen(process.env.PORT, () => console.log(`Server starter on port ${process.env.PORT}`));
-} else {
-    app.listen(process.env.PORTHTTP, () => console.log(`Server starter on port ${process.env.PORTHTTP}`))
-}
+// if (fs.existsSync(process.env.PRIVATE_KEY_PATH) && fs.existsSync(process.env.PRIVATE_CERTIFICATE_PATH)) {
+//     const options = {
+//         key: fs.readFileSync(process.env.PRIVATE_KEY_PATH),
+//         cert: fs.readFileSync(process.env.PRIVATE_CERTIFICATE_PATH)
+//     };
+
+//     https.createServer(options, app).listen(process.env.PORT, () => console.log(`Server starter on port ${process.env.PORT}`));
+// } else {
+    
+// }
