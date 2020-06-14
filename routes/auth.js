@@ -19,7 +19,7 @@ router.post('/register', async (req, res) => {
 
     var token = jwt.sign({ email: response.email, name: user.name }, process.env.SECRET, { expiresIn: 86400 });
 
-    res.send({token});
+    res.send({ token });
 });
 
 router.get('/me', Authorize, (req, res) => {
@@ -27,7 +27,7 @@ router.get('/me', Authorize, (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-    const user = await User.findOne({ email: req.body.email})
+    const user = await User.findOne({ email: req.body.email })
         .exec()
         .catch(err => res.send(500).send(err));
 
@@ -36,7 +36,7 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign({ email: user.email, name: user.name }, process.env.SECRET, { expiresIn: 86400 });
 
-    res.status(200).send({ token });    
+    res.status(200).send({ token });
 });
 
 module.exports = router;

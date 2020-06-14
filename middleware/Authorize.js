@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
         if (err) {
             return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
         }
-        
+
         req.jwtPayload = decoded;
         next()
     });
