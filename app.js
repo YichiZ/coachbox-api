@@ -19,7 +19,7 @@ app.use('/', require('./routes/index'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/auth', require('./routes/auth'));
 
-app.listen(process.env.PORTHTTP, () => console.log(`Server starter on port ${process.env.PORTHTTP}`))
+app.listen(process.env.PORT, () => console.log(`Server starter on port ${process.env.PORT}`))
 
 // if (fs.existsSync(process.env.PRIVATE_KEY_PATH) && fs.existsSync(process.env.PRIVATE_CERTIFICATE_PATH)) {
 //     const options = {
