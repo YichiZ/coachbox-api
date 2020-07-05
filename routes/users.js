@@ -13,11 +13,11 @@ router.get('/', Authorize, async (req, res) => {
 router.get('/:id', Authorize, async (req, res) => {
     const email = req.params['id'];
 
-    const user = await User.findOne({email})
+    const user = await User.findOne({ email })
         .exec()
         .catch(err => console.log(err));
 
-    user ? res.status(200).json(user) : res.sendStatus(404);    
+    user ? res.status(200).json(user) : res.sendStatus(404);
 });
 
 router.post('/', Authorize, async (req, res) => {
